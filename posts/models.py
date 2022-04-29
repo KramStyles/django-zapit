@@ -12,6 +12,9 @@ class Post(models.Model):
         # List in descending order based on the date. Latest dates first
         ordering = ['-created']
 
+    def __str__(self):
+        return self.title
+
 
 class Vote(models.Model):
     voter = models.ForeignKey(User, on_delete=models.CASCADE)

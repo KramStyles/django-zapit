@@ -5,5 +5,8 @@ from .models import Post, Vote
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
+        author = serializers.ReadOnlyField(source='author.username')
+        author_id = serializers.ReadOnlyField(source='author.id')
+
         model = Post
         fields = '__all__'
