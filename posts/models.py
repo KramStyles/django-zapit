@@ -13,7 +13,7 @@ class Post(models.Model):
         ordering = ['-created']
 
     def __str__(self):
-        return self.title
+        return f"{self.title}, => {self.url}"
 
 
 class Vote(models.Model):

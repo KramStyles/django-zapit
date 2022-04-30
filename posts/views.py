@@ -11,3 +11,17 @@ class PostList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class VoteView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = serializers.VoteSerializer
+    post = None
+
+    def get_queryset(self):
+        user = self.request.user
+        self.post = Post.objects.get(pk=self.kwargs['pk'])
+        return Vote.objects.filter(voter=user, post=self.post)
+
+    def perform_create(self, serializer):
+        serializer.save(voter=self.request.user, post=self.post)
