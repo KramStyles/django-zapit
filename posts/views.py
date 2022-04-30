@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, exceptions
 
 from .models import Post, Vote
 from . import serializers
@@ -16,12 +16,15 @@ class PostList(generics.ListCreateAPIView):
 class VoteView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = serializers.VoteSerializer
-    post = None
 
     def get_queryset(self):
         user = self.request.user
-        self.post = Post.objects.get(pk=self.kwargs['pk'])
-        return Vote.objects.filter(voter=user, post=self.post)
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        return Vote.objects.filter(voter=user, post=post)
 
     def perform_create(self, serializer):
-        serializer.save(voter=self.request.user, post=self.post)
+        if self.get_queryset().exists():
+            raise exceptions.ValidationError('You cannot vote for the same post twice :-|')
+        
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        serializer.save(voter=self.request.user, post=post)
