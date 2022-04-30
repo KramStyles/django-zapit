@@ -21,4 +21,4 @@ class Vote(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.voter.username} ≥ {self.post}"
+        return f"{self.voter.username.title()} votes for ≥ {self.post}"
